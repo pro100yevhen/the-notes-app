@@ -12,6 +12,7 @@ import piddubnyi.notes.model.Note;
 import piddubnyi.notes.model.Tag;
 import piddubnyi.notes.service.NoteService;
 
+import java.util.Map;
 import java.util.Set;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -53,6 +54,11 @@ public class NoteController {
             @RequestParam(required = false) Set<Tag> tags,
             @PageableDefault(size = 20, sort = "createdAt", direction = DESC) Pageable pageable) {
         return noteService.findAllSummaries(tags, pageable);
+    }
+
+    @GetMapping("/{id}/stats")
+    public Map<String, Integer> getNoteStats(@PathVariable String id) {
+        return noteService.getNoteStats(id);
     }
 }
 

@@ -10,7 +10,9 @@ import piddubnyi.notes.model.Note;
 import piddubnyi.notes.model.Tag;
 import piddubnyi.notes.repository.NoteRepository;
 
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class NoteService {
@@ -52,5 +54,30 @@ public class NoteService {
         } else {
             return noteRepository.findByTagsIn(tags, pageable);
         }
+    }
+
+    public Map<String, Integer> getNoteStats(String id) {
+        Note note = findById(id);
+        String text = note.text();
+
+        if (text == null || text.isBlank()) {
+            return Collections.emptyMap();
+        }
+        String splitter = "\\s+";
+        Map<String, Integer> wordFrequencies = Arrays.stream(text.trim().split(splitter))
+                .collect(Collectors.groupingBy(
+                        Function.identity(),
+                        Collectors.summingInt(word -> 1)
+                ));
+
+        return wordFrequencies.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue,
+                        LinkedHashMap::new
+                ));
     }
 }
