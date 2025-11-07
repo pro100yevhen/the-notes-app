@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: notes-app
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      username: root
+      password: secret
+      database: notesdb
+      authentication-database: admin
